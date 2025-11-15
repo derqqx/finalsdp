@@ -4,7 +4,7 @@ import org.example.vehicle.Vehicle;
 public class DailyPricing implements PricingStrategy {
 
     @Override
-    public float calculatePrice(Vehicle vehicle, float days) {
+    public float calculatePrice(Vehicle vehicle, int days) {
         if (days <= 0) return 0;
 
         return vehicle.getBasePricePerDay() * days;

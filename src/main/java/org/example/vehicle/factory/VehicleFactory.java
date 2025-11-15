@@ -5,7 +5,7 @@ public final class VehicleFactory {
 
     // Car constants
     private static final String DEFAULT_CAR_ENGINE = "1.6L I4";
-    private static final float DEFAULT_CAR_SEATS = 5;
+    private static final int DEFAULT_CAR_SEATS = 5;
     private static final float CAR_PRICE_PER_DAY = 5000;
     private static final float CAR_PRICE_PER_HOUR = 650;
 
@@ -14,7 +14,7 @@ public final class VehicleFactory {
     private static final float BIKE_PRICE_PER_HOUR = 250;
 
     // Van constants
-    private static final float DEFAULT_VAN_CAPACITY = 8;
+    private static final int DEFAULT_VAN_CAPACITY = 8;
     private static final float VAN_PRICE_PER_DAY = 8000;
     private static final float VAN_PRICE_PER_HOUR = 1000;
 
@@ -52,11 +52,11 @@ public final class VehicleFactory {
 
 
     public static Vehicle createCustomCar(String id, String model, String engine,
-                                          float seats, float pricePerDay, float pricePerHour) {
+                                          int seats, float pricePerDay, float pricePerHour) {
         return new Car(id, model, engine, seats, pricePerDay, pricePerHour);
     }
 
-    public static Vehicle createCustomVan(String id, String model, float capacity,
+    public static Vehicle createCustomVan(String id, String model, int capacity,
                                           float pricePerDay, float pricePerHour) {
         return new Van(id, model, capacity, pricePerDay, pricePerHour);
     }
