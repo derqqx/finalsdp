@@ -4,7 +4,7 @@ public interface Vehicle {
     String getId();
     String getType(); // e.g., "Car", "Van", "Bike"
     String getModel();
-    int getBasePricePerDay();
-    int getBasePricePerHour();
+    float getBasePricePerDay();
+    float getBasePricePerHour();
     String getDescription();
 }

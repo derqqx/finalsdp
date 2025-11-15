@@ -5,18 +5,18 @@ public final class VehicleFactory {
 
     // Car constants
     private static final String DEFAULT_CAR_ENGINE = "1.6L I4";
-    private static final int DEFAULT_CAR_SEATS = 5;
-    private static final int CAR_PRICE_PER_DAY = 5000;
-    private static final int CAR_PRICE_PER_HOUR = 650;
+    private static final float DEFAULT_CAR_SEATS = 5;
+    private static final float CAR_PRICE_PER_DAY = 5000;
+    private static final float CAR_PRICE_PER_HOUR = 650;
 
     // Bike constants
-    private static final int BIKE_PRICE_PER_DAY = 1500;
-    private static final int BIKE_PRICE_PER_HOUR = 250;
+    private static final float BIKE_PRICE_PER_DAY = 1500;
+    private static final float BIKE_PRICE_PER_HOUR = 250;
 
     // Van constants
-    private static final int DEFAULT_VAN_CAPACITY = 8;
-    private static final int VAN_PRICE_PER_DAY = 8000;
-    private static final int VAN_PRICE_PER_HOUR = 1000;
+    private static final float DEFAULT_VAN_CAPACITY = 8;
+    private static final float VAN_PRICE_PER_DAY = 8000;
+    private static final float VAN_PRICE_PER_HOUR = 1000;
 
     private VehicleFactory() {}
 
@@ -52,17 +52,17 @@ public final class VehicleFactory {
 
 
     public static Vehicle createCustomCar(String id, String model, String engine,
-                                          int seats, int pricePerDay, int pricePerHour) {
+                                          float seats, float pricePerDay, float pricePerHour) {
         return new Car(id, model, engine, seats, pricePerDay, pricePerHour);
     }
 
-    public static Vehicle createCustomVan(String id, String model, int capacity,
-                                          int pricePerDay, int pricePerHour) {
+    public static Vehicle createCustomVan(String id, String model, float capacity,
+                                          float pricePerDay, float pricePerHour) {
         return new Van(id, model, capacity, pricePerDay, pricePerHour);
     }
 
     public static Vehicle createCustomBike(String id, String model,
-                                           int pricePerDay, int pricePerHour) {
+                                           float pricePerDay, float pricePerHour) {
         return new Bike(id, model, pricePerDay, pricePerHour);
     }
 }
