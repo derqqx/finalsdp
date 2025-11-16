@@ -1,5 +1,6 @@
 package org.example.vehicle.decorator;
 import org.example.vehicle.Vehicle;
+import org.example.vehicle.abstractvehicle.VehicleDecorator;
 
 public class InsuranceDecorator extends VehicleDecorator {
     private static final float INSURANCE_PRICE_PER_DAY = 300f;

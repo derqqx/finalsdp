@@ -1,6 +1,7 @@
 package org.example.vehicle.decorator;
 
 import org.example.vehicle.Vehicle;
+import org.example.vehicle.abstractvehicle.VehicleDecorator;
 
 // we are for children's safety!
 public class ChildSeatDecorator extends VehicleDecorator {

@@ -1,5 +1,6 @@
 package org.example.vehicle.decorator;
 import org.example.vehicle.Vehicle;
+import org.example.vehicle.abstractvehicle.VehicleDecorator;
 
 public class GPSDecorator extends VehicleDecorator {
     private static final float GPS_PRICE_PER_DAY = 200f;
