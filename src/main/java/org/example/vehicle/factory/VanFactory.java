@@ -5,7 +5,7 @@ import org.example.vehicle.Vehicle;
 
 public final class VanFactory {
 
-    private static final float DEFAULT_CAPACITY = 8;
+    private static final int DEFAULT_CAPACITY = 8;
     private static final float PRICE_PER_DAY = 8000;
     private static final float PRICE_PER_HOUR = 1000;
 
@@ -21,7 +21,7 @@ public final class VanFactory {
         );
     }
 
-    public static Vehicle createCustomVan(String id, String model, float capacity,
+    public static Vehicle createCustomVan(String id, String model, int capacity,
                                           float pricePerDay, float pricePerHour) {
         return new Van(id, model, capacity, pricePerDay, pricePerHour);
     }
