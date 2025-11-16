@@ -1,11 +1,14 @@
 package org.example.facade;
 
 import org.example.vehicle.Vehicle;
-import org.example.vehicle.factory.VehicleFactory;
 import org.example.vehicle.decorator.*;
 import org.example.pricing.PricingStrategy;
 import org.example.availability.AvailabilityNotifier;
 import org.example.availability.CustomerObserver;
+import org.example.vehicle.factory.BikeFactory;
+import org.example.vehicle.factory.CarFactory;
+import org.example.vehicle.factory.VanFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,9 +28,9 @@ public class RentalServiceFacade {
     public Vehicle createVehicle(String id, String model, String type) {
         Vehicle vehicle;
         switch (type.toUpperCase()) {
-            case "CAR" -> vehicle = VehicleFactory.createStandardCar(id, model);
-            case "VAN" -> vehicle = VehicleFactory.createStandardVan(id, model);
-            case "BIKE" -> vehicle = VehicleFactory.createStandardBike(id, model);
+            case "CAR" -> vehicle = CarFactory.createStandardCar(id, model);
+            case "VAN" -> vehicle = VanFactory.createStandardVan(id, model);
+            case "BIKE" -> vehicle = BikeFactory.createStandardBike(id, model);
             default -> throw new IllegalArgumentException("Unknown vehicle type");
         }
         availableVehicles.put(id, vehicle);
