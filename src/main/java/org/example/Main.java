@@ -127,7 +127,7 @@ public class Main {
             return;
         }
         for (Vehicle v : available.values()) {
-            System.out.printf(" - %s | %s | day=%d | hour=%d | desc=%s%n",
+            System.out.printf(" - %s | %s | day=%.2f | hour=%.2f | desc=%s%n",
                     v.getId(), v.getType(), v.getBasePricePerDay(), v.getBasePricePerHour(), v.getDescription());
         }
     }

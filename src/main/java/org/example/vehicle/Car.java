@@ -6,11 +6,11 @@ public class Car implements Vehicle{
     private final String id;
     private final String model;
     private final String engine;
-    private final float seats;
+    private final int seats;
     private final float basePricePerDay;
     private final float basePricePerHour;
 
-    public Car(String id, String model, String engine, float seats,
+    public Car(String id, String model, String engine, int seats,
                float basePricePerDay, float basePricePerHour) {
         this.id = Objects.requireNonNull(id);
         this.model = Objects.requireNonNull(model);

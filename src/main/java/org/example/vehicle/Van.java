@@ -5,11 +5,11 @@ import java.util.Objects;
 public class Van implements Vehicle{
     private final String id;
     private final String model;
-    private final float capacity; // e.g., cargo or passengers
+    private final int capacity; // e.g., cargo or passengers
     private final float basePricePerDay;
     private final float basePricePerHour;
 
-    public Van(String id, String model, float capacity,
+    public Van(String id, String model, int capacity,
                float basePricePerDay, float basePricePerHour) {
         this.id = Objects.requireNonNull(id);
         this.model = Objects.requireNonNull(model);
