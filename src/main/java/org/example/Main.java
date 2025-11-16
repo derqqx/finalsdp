@@ -1,135 +1,102 @@
 package org.example;
 
-
-
-import org.example.vehicle.Vehicle;
-
-import org.example.vehicle.decorator.ChildSeatDecorator;
-import org.example.vehicle.decorator.GPSDecorator;
-import org.example.vehicle.decorator.InsuranceDecorator;
 import org.example.facade.RentalServiceFacade;
+import org.example.facade.RentalServiceFacadeImpl;
 import org.example.pricing.DailyPricing;
 import org.example.pricing.HourlyPricing;
 import org.example.pricing.PricingStrategy;
-import org.example.vehicle.factory.CarFactory;
+import org.example.rental_order.RentalOrder;
+import org.example.rental_order.RentalOrderBuilder;
+import org.example.vehicle.Vehicle;
 
 import java.util.Map;
 
-/**
- * Main demo: shows integration of patterns:
- * - Factory (VehicleFactory)
- * - Decorator (GPS, Insurance, ChildSeat)
- * - Strategy (Daily, Hourly)
- * - Observer (via facade notifications)
- * - Facade (RentalServiceFacade)
- *
- * Assumes package structure:
- * org.example.vehicle...
- * org.example.vehicle.decorator...
- * org.example.pricing...
- * org.example.availability...
- * org.example.facade...
- */
 public class Main {
-
     public static void main(String[] args) {
-        System.out.println("=== Vehicle Rental Service Demo ===");
 
-        // 1) Create facade (it internally keeps AvailabilityNotifier and inventory)
-        RentalServiceFacade facade = new RentalServiceFacade();
+        System.out.println("=== Vehicle Rental Service ===");
 
-        // 2) Register two customers (they will be observers)
-        facade.addCustomer("Alice");
-        facade.addCustomer("Bob");
+        // Create facade (Facade pattern)
+        RentalServiceFacade facade = new RentalServiceFacadeImpl();
+
+        // Observer pattern: customers who want notifications
+        facade.addCustomer("Kairat Nurtas");
+        facade.addCustomer("Billy Herington");
 
         System.out.println("\n--- Creating standard vehicles via Facade (uses VehicleFactory internally) ---");
-        Vehicle v1 = facade.createVehicle("VAN-200", "Ford Transit", "VAN");
-        Vehicle c1 = facade.createVehicle("CAR-100", "Toyota Corolla", "CAR");
-        Vehicle b1 = facade.createVehicle("BIKE-300", "Honda CB", "BIKE");
+        // Factory pattern: create vehicles via factories through facade
+        Vehicle car1 = facade.createVehicle("C1", "Toyota Corolla", "car");
+        Vehicle van1 = facade.createVehicle("V1", "Ford Transit", "van");
+        Vehicle bike1 = facade.createVehicle("B1", "Giant Escape", "bike");
 
-        // Print available vehicles
-        System.out.println("\nAvailable vehicles (after creation):");
-        printAvailable(facade);
+        // Decorator pattern: add addons (GPS, Insurance, Child seat)
+        car1 = facade.addGPS(car1);                // car now has GPS
+        car1 = facade.addInsurance(car1);          // car now has GPS + Insurance
+        van1 = facade.addChildSeat(van1);          // van has child seat
 
-        // 3) Demonstrate creating a custom vehicle via factory (custom params)
-        System.out.println("\n--- Creating a custom car via VehicleFactory directly ---");
-        Vehicle customCar = CarFactory.createCustomCar("CAR-CUST-1", "Mazda CX-5", "2.0L Turbo", 5, 6500, 800);
-        System.out.println("Custom car created: " + customCar.getDescription() +
-                " | day=" + customCar.getBasePricePerDay() +
-                " | hour=" + customCar.getBasePricePerHour());
+        // Show available vehicles (Facade delegates to inventory service)
+        System.out.println("\n--- Available vehicles after creation and decorating: ---");
+        printInventory(facade.getAvailableVehicles());
 
-        // Note: facade.createVehicle adds to its internal inventory.
-        // For demo we will rent the custom car directly through the facade.rentVehicle (which triggers observers).
-        System.out.println("\n--- Decorating custom car with GPS and Insurance ---");
-        Vehicle customWithGps = facade.addGPS(customCar);
-        Vehicle customWithGpsAndIns = facade.addInsurance(customWithGps);
+        // Strategy pattern: choose pricing strategy
+        PricingStrategy daily = new DailyPricing();   // price per day
+        PricingStrategy hourly = new HourlyPricing(); // price per hour
 
-        System.out.println("Decorated custom car desc: " + customWithGpsAndIns.getDescription()
-                + " | day=" + customWithGpsAndIns.getBasePricePerDay()
-                + " | hour=" + customWithGpsAndIns.getBasePricePerHour());
+        // Builder pattern: build a RentalOrder (immutable object)
+        RentalOrder order = new RentalOrderBuilder()
+                .setOrderId("ORDER-100")
+                .setVehicle(car1)
+                .setRentalHours(2.0f)   // if using HourlyPricing, treat as hours
+                .setPricingStrategy(hourly)
+                .includeInsurance(true)
+                .build();
 
-        // 4) Calculate price using Daily strategy for 3 days
-        PricingStrategy daily = new DailyPricing();
-        int days = 3;
-        System.out.println("\n--- Pricing: daily strategy for " + days + " days ---");
-        float dailyPrice = daily.calculatePrice(customWithGpsAndIns, days);
-        System.out.printf("Daily price for %s for %d days = %.2f%n",
-                customWithGpsAndIns.getId(), days, dailyPrice);
+        System.out.println("\n--- Created order: " + order + " ---");
 
-        // 5) Rent a standard van from facade for 2 days using DailyPricing
-        System.out.println("\n--- Rent a VAN from facade (VAN-200) for 2 days ---");
-        Vehicle van = facade.getAvailableVehicles().get("VAN-200");
-        if (van != null) {
-            // add child seat via facade decorator helper
-            Vehicle vanWithChildSeat = facade.addChildSeat(van);
+        // Rent the vehicle using facade (Strategy is used inside order but we also show direct rent)
+        float priceViaFacade = facade.rentVehicle(car1, 2.0f, hourly);
+        System.out.println("Price charged by facade for 2 hours (car1): " + priceViaFacade);
 
-            PricingStrategy pricing = new DailyPricing();
-            int rentDays = 2;
-            float priceForVan = facade.rentVehicle(vanWithChildSeat, rentDays, pricing);
-            System.out.printf("Rented %s for %d days. Price charged: %.2f%n",
-                    vanWithChildSeat.getId(), rentDays, priceForVan);
-        } else {
-            System.out.println("VAN-200 not found in facade inventory");
-        }
+        // The order can calculate price as well (Builder + Strategy)
+        System.out.println("Order.calculatePrice(): " + order.calculatePrice());
 
-        // 6) Return the van (observer will be notified)
-        System.out.println("\n--- Returning VAN-200 ---");
-        if (van != null) {
-            facade.returnVehicle(van);
-        }
+        // Inventory after renting
+        System.out.println("\nAvailable vehicles after renting car1:");
+        printInventory(facade.getAvailableVehicles());
 
-        // 7) Rent the bike for 5 hours using HourlyPricing
-        System.out.println("\n--- Rent a BIKE (BIKE-300) for 5 hours using hourly strategy ---");
-        Vehicle bike = facade.getAvailableVehicles().get("BIKE-300");
-        if (bike != null) {
-            PricingStrategy hourly = new HourlyPricing();
-            int hours = 5;
-            float bikePrice = facade.rentVehicle(bike, hours, hourly);
-            System.out.printf("Rented %s for %d hours. Price charged: %.2f%n",
-                    bike.getId(), hours, bikePrice);
+        // Return vehicle -> notify observers and add back to inventory
+        facade.returnVehicle(car1);
 
-            System.out.println("\n--- Returning BIKE-300 ---");
-            facade.returnVehicle(bike);
-        } else {
-            System.out.println("BIKE-300 not found in facade inventory");
-        }
+        System.out.println("\nAvailable vehicles after returning car1:");
+        printInventory(facade.getAvailableVehicles());
 
-        System.out.println("\n--- Final available vehicles snapshot ---");
-        printAvailable(facade);
+        // Another scenario: rent van for 1 day (demonstrates daily pricing)
+        RentalOrder vanOrder = new RentalOrderBuilder()
+                .setOrderId("ORDER-101")
+                .setVehicle(van1)
+                .setRentalHours(1.0f) // 1 day in DailyPricing semantics
+                .setPricingStrategy(daily)
+                .includeInsurance(false)
+                .build();
 
-        System.out.println("\n=== Demo finished ===");
+        System.out.println("\n--- Created Van order: " + vanOrder + " ---");
+        float vanPrice = facade.rentVehicle(van1, 1.0f, daily);
+        System.out.println("Price for van 1 day: " + vanPrice);
+
+        System.out.println("\n--- Final available vehicles: ---");
+        printInventory(facade.getAvailableVehicles());
+
+        System.out.println("\n=== Program finished ===");
     }
 
-    private static void printAvailable(RentalServiceFacade facade) {
-        Map<String, Vehicle> available = facade.getAvailableVehicles();
+    private static void printInventory(Map<String, Vehicle> available) {
         if (available.isEmpty()) {
-            System.out.println("(no vehicles)");
+            System.out.println("  (none)");
             return;
         }
-        for (Vehicle v : available.values()) {
-            System.out.printf(" - %s | %s | day=%.2f | hour=%.2f | desc=%s%n",
-                    v.getId(), v.getType(), v.getBasePricePerDay(), v.getBasePricePerHour(), v.getDescription());
-        }
+        available.forEach((id, v) -> System.out.printf("  %s -> %s | desc: %s | dayPrice: %.2f | hourPrice: %.2f%n",
+                id, v.getType(), v.getDescription(), v.getBasePricePerDay(), v.getBasePricePerHour()));
     }
 }
+
 

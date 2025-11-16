@@ -1,4 +1,4 @@
-package org.example.vehicle.decorator;
+package org.example.vehicle.abstractvehicle;
 
 import org.example.vehicle.Vehicle;
 
